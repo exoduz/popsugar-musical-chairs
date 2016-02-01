@@ -1,0 +1,78 @@
+<html>
+<head>
+	<title>PopSugare Musical Chairs</title>
+	<script type="text/javascript">
+		/*
+			Take a second to imagine that you are in a room with 100 chairs arranged in a circle.
+			These chairs are numbered sequentially from One to One Hundred.
+			At some point in time, the person in chair #1 will be told to leave the room.
+			The person in chair #2 will be skipped, and the person in chair #3 will be told to leave.
+			Next to go is person in chair #6.
+			In other words, 1 person will be skipped initially, and then 2, 3, 4.. and so on.
+			This pattern of skipping will keep going around the circle until there is only one person remaining- The survivor!
+			Note that each chair is removed when the person leaves the room.
+		*/
+		(function(number_of_chairs) {
+			var musicalChairs = {
+				chairs: [],
+				number_of_chairs: number_of_chairs || 0,
+				init: function() {
+					this.create_chairs(this.number_of_chairs);
+					console.log(this.chairs);
+				},
+				create_chairs: function(number_of_chairs) {
+					var chairs = [];
+					for (var i = 1; i <= number_of_chairs; i++) {
+						chairs.push(i);
+					}
+					
+					this.chairs = chairs;
+				},
+				start: function() {
+					//Start at the first
+					var chairs = this.chairs,
+						position = 0,
+						previous_position = 0,
+						skip = 0;
+
+					while (chairs.length > 1){
+						// First position = 0 + ( 0 % 100 ) = 0
+						// Second position = 0 + ( 1 % 100 ) = 1
+						// Third position = 1 + ( 2 % 100 ) = 3
+						// ...
+						// Remember position is zero-based indexing
+						position = position + ( skip % chairs.length );
+
+						//Normalize position so it's within the boundaries one of the items inside chairs (this is the tricky part)
+						//If new (zero-based) position is to be 87 from an 87-long array, then 87 % 87 = 0 (ie. the back to the first item in the array)
+						//If new position is to be 88 from an 87-long array, then 88 % 87 = 1 (second item in the array)
+						//If new position is to be 15 from an 87-long array, then 15 % 87 = 15 (unchanged)
+						position = ( position % chairs.length );
+
+						//For debugging
+						var previous_length = chairs.length;
+						
+						//remove one item
+						var removed = chairs.splice(position, 1);
+						
+						console.log( 'previous position', previous_position, 'current skip:', skip , 'means we are splicing position:', position, ' from an array len:', previous_length, ' removes chair#', removed );
+
+						//Increment skips (cool thing is we don't need to add an additional 1 because the array length is reduced as we spliced)
+						skip += 1;
+						previous_position = position;
+					}
+
+					console.log(chairs[0]);
+				},
+			}
+
+			musicalChairs.init();
+			musicalChairs.start();
+		})(5);
+	</script>
+</head>
+
+<body>
+	Hello
+</body>
+</html>
